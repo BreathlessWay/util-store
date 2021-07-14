@@ -1,0 +1,26 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    "source",
+    "res"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony",
+    "ts": "ts-node"
+  },
+  "events": {
+    "restart": "echo 'App restarted'"
+  },
+  "watch": [
+    "server/",
+    "client/",
+    "dist/"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js,json,ts,ejs"
+}

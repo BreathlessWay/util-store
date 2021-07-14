@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%- title %></title>
+    <link rel="stylesheet" type="text/css" href="<%- style %>">
+</head>
+<body>
+    <div class="addeventlistener aadasd" id="fasdd">ddd</div>
+
+    <ul class="list">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+    </ul>
+
+    <div id="click">fasd</div>
+    <hr>
+    <div id="s1">
+        <div id="s2">
+            <div id="s3">
+                SSS
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="<%- sdk %>"></script>
+<script>
+  console.log(zUtils);
+  document.querySelector('.addeventlistener').addEventListener('click', ()=>{
+        console.log(111)
+    })
+    document.getElementById('click').onclick = function() {
+      console.log(222)
+    }
+
+    document.getElementById('s1').addEventListener('click', (e)=>{
+      console.log('s1')
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    document.querySelector('.list').addEventListener('click', (e)=>{
+      console.log(333)
+    })
+</script>
