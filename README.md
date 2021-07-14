@@ -1,10 +1,6 @@
-[离线存储方案 localforage](https://localforage.docschina.org/#localforage)
+# ZUtils
 
-[IntersectionObserver](https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver)
-
-[MutationObserver](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver)
-
-[page-lifecycle](https://github.com/GoogleChromeLabs/page-lifecycle)
+> 一个常用工具函数的集合
 
 > BrowsersList
 ```
