@@ -2,8 +2,8 @@ import packageJson from "../package.json";
 
 export const PORT = 4000;
 
-export const ZUtils = "zUtils";
+export const ZUtil = "zUtil";
 
-export const ZUtilsStylePath = "client/zUtils.css";
+export const ZUtilStylePath = "client/zUtil.css";
 
-export const ZUtilsSdkPath = packageJson.browser;
+export const ZUtilSdkPath = packageJson.browser;

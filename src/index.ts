@@ -9,6 +9,7 @@ import { getTimestamp } from "utils/getTimestamp";
 import GetType from "utils/GetType";
 import ValidatorFunc from "utils/validatorFunc";
 import * as validParams from "utils/validParams";
+import { getRelativePosition } from "utils/getRelativePosition";
 
 export default {
   ...proxyClickEvent,
@@ -19,6 +20,7 @@ export default {
   generateNormalId,
   getDomPath,
   getDomPathWithIndex,
+  getRelativePosition,
   getTimestamp,
   GetType,
   ValidatorFunc,

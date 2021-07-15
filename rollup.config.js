@@ -19,17 +19,17 @@ const commonOutput = [
       file: packageJson.browser,
       format: "iife",
       sourcemap,
-      name: "zUtils",
-      banner: "/*! util-store version " + packageJson.version + " */",
+      name: "zUtil",
+      banner: "/*! zUtil-store version " + packageJson.version + " */",
       footer: "/*! Author: " + packageJson.author + " */",
     },
   ],
   buildOutput = [
     {
-      file: "dist/util-store.umd.js",
+      file: "dist/zUtil-store.umd.js",
       format: "umd",
       sourcemap,
-      name: "zUtils",
+      name: "zUtil",
     },
     {
       file: packageJson.main,

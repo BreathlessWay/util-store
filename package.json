@@ -1,10 +1,10 @@
 {
-  "name": "util-store",
+  "name": "zutil-store",
   "version": "1.0.0",
   "description": "util store, for example: eventbus cookie validator",
-  "browser": "dist/zUtils.min.js",
-  "main": "dist/zUtils.cjs.js",
-  "module": "dist/zUtils.esm.js",
+  "browser": "dist/zUtil.min.js",
+  "main": "dist/zUtil.cjs.js",
+  "module": "dist/zUtil.esm.js",
   "dependencies": {
     "@babel/runtime": "^7.14.6",
     "lodash-es": "^4.17.21"
@@ -71,13 +71,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BreathlessWay/util-store.git"
+    "url": "git+https://github.com/BreathlessWay/zUtil-store.git"
   },
   "keywords": [],
   "author": "BreathlessWay",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/BreathlessWay/util-store/issues"
+    "url": "https://github.com/BreathlessWay/zUtil-store/issues"
   },
-  "homepage": "https://github.com/BreathlessWay/util-store#readme"
+  "homepage": "https://github.com/BreathlessWay/zUtil-store#readme"
 }

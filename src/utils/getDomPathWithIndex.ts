@@ -1,5 +1,5 @@
 export const getDomPathWithIndex = (ev: Event) => {
-  const _path = (ev as any).path;
+  const _path = ev.path;
   let pathResult = "";
   if (_path && _path.length) {
     _path.forEach((item: Element, index: number) => {

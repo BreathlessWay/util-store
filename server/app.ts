@@ -11,21 +11,21 @@ import zlib from "zlib";
 
 import { log } from "./utils";
 
-import { PORT, ZUtils, ZUtilsStylePath, ZUtilsSdkPath } from "./constants";
+import { PORT, ZUtil, ZUtilStylePath, ZUtilSdkPath } from "./constants";
 
 const app = new Koa(),
   router = new Router<
     any,
     {
-      zUtils: { sdk: string; style: string };
+      zUtil: { sdk: string; style: string };
     }
   >(),
   staticPath = path.resolve(__dirname, "../"),
   ejsPath = path.resolve(staticPath, "client");
 
-app.context.zUtils = {
-  sdk: ZUtilsSdkPath,
-  style: ZUtilsStylePath,
+app.context.zUtil = {
+  sdk: ZUtilSdkPath,
+  style: ZUtilStylePath,
 };
 
 render(app, {
@@ -73,18 +73,18 @@ app.use(logger());
 app.use(router.routes()).use(router.allowedMethods());
 
 router.get(`/`, async (ctx, next) => {
-  await ctx.render(ZUtils, {
-    title: "ZUtils 测试服务器 首页",
+  await ctx.render(ZUtil, {
+    title: "ZUtil 测试服务器 首页",
     type: "home",
-    ...ctx.zUtils,
+    ...ctx.zUtil,
   });
 });
 
 router.get(`/test`, async (ctx, next) => {
-  await ctx.render(ZUtils, {
-    title: "ZUtils 测试服务器 test 页面",
+  await ctx.render(ZUtil, {
+    title: "ZUtil 测试服务器 test 页面",
     type: "test",
-    ...ctx.zUtils,
+    ...ctx.zUtil,
   });
 });
 
@@ -93,10 +93,10 @@ router.get(`/report`, async (ctx, next) => {
 });
 
 router.get(
-  ZUtils,
-  `/${ZUtils}`,
+  ZUtil,
+  `/${ZUtil}`,
   async (ctx, next) => {
-    ctx.state[ZUtils] = ctx.query;
+    ctx.state[ZUtil] = ctx.query;
     await next();
   },
   (ctx) => {
@@ -105,5 +105,5 @@ router.get(
 );
 
 app.listen(PORT, () => {
-  log(`ZUtils test server working on http://localhost:${PORT}`);
+  log(`ZUtil test server working on http://localhost:${PORT}`);
 });
