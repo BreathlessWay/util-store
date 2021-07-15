@@ -1,8 +1,14 @@
 import {
   validArrayParams,
   validFunctionParams,
+  validObjectParams,
   validStringParams,
 } from "utils/validParams";
+
+type ListenMapValueType = {
+  listenList: Array<Function>;
+  offlineStack: Array<Function>;
+};
 
 class EventBus {
   constructor(prefix?: string) {
@@ -11,87 +17,114 @@ class EventBus {
 
   private readonly prefix: string = "";
 
-  private listenMap: Record<string, Array<Function>> = {};
+  private listenMap: Record<string, ListenMapValueType> = {};
 
-  hasKey = (key: string) => {
+  private computeKey = (key: string) => {
+    if (!validStringParams(key)) {
+      throw new Error("事件名称错误！");
+    }
+    if (this.prefix && key.indexOf(this.prefix) === 0) {
+      return key;
+    }
+    return this.prefix ? `${this.prefix}_${key}` : key;
+  };
+
+  private hasKey = (key: string) => {
     return this.listenMap.hasOwnProperty(key);
   };
 
   on = (key: string, fun: Function) => {
-    if (!validStringParams(key)) {
-      console.error("缺少注册事件名称");
-      return;
-    }
-    key = this.prefix + key;
-    if (validFunctionParams(fun)) {
-      if (!this.hasKey(key)) {
-        this.listenMap[key] = [];
+    try {
+      key = this.computeKey(key);
+      if (validFunctionParams(fun)) {
+        if (!this.hasKey(key)) {
+          this.listenMap[key] = {
+            listenList: [],
+            offlineStack: [],
+          };
+        }
+        this.listenMap[key].listenList.push(fun);
+        const { offlineStack } = this.listenMap[key];
+        let offlineFun = offlineStack.shift();
+        while (offlineFun) {
+          offlineFun();
+          offlineFun = offlineStack.shift();
+        }
+        console.log(this.listenMap[key]);
+      } else {
+        throw new Error("注册的函数错误");
       }
-      this.listenMap[key].push(fun);
-    } else {
-      console.error("注册事件方法错误");
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
   trigger = (key: string, ...args: Array<any>) => {
-    if (!validStringParams(key)) {
-      console.error("缺少触发事件名称");
-      return;
-    }
-    key = this.prefix + key;
-    const listenList = this.listenMap[key];
-    if (!validArrayParams(listenList)) {
-      listenList.forEach((listen) => {
-        listen.apply(this, args);
-      });
-    } else {
-      console.error("尚未注册该事件");
+    try {
+      key = this.computeKey(key);
+      const targetListenMap = this.listenMap[key];
+      if (
+        validObjectParams(targetListenMap) &&
+        validArrayParams(targetListenMap.listenList)
+      ) {
+        // 已 on
+        const { listenList } = targetListenMap;
+        listenList.forEach((listen) => {
+          listen.apply(this, args);
+        });
+      } else {
+        // 未 on
+        this.listenMap[key] = this.listenMap[key] || {
+          listenList: [],
+          offlineStack: [],
+        };
+        this.listenMap[key].offlineStack.push(() => {
+          this.trigger(key, ...args);
+        });
+      }
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
-  off = (key: string, fun: Function) => {
-    if (!validStringParams(key)) {
-      console.error("缺少取消事件名称");
-      return;
-    }
-    key = this.prefix + key;
-    if (validFunctionParams(fun)) {
-      let listenList = this.listenMap[key];
-      if (validArrayParams(listenList)) {
-        let _index = listenList.indexOf(fun);
-        while (_index > -1) {
-          listenList.splice(_index, 1);
-          _index = listenList.indexOf(fun);
+  off = (key: string, fun?: Function) => {
+    try {
+      key = this.computeKey(key);
+      if (validFunctionParams(fun)) {
+        let { listenList } = this.listenMap[key];
+        if (validArrayParams(listenList)) {
+          let _index = listenList.indexOf(fun as Function);
+          while (_index > -1) {
+            listenList.splice(_index, 1);
+            _index = listenList.indexOf(fun as Function);
+          }
+          if (!listenList.length) {
+            delete this.listenMap[key];
+          } else {
+            this.listenMap[key].listenList = listenList;
+          }
         }
-        if (!listenList.length) {
-          delete this.listenMap[key];
-        } else {
-          this.listenMap[key] = listenList;
-        }
+      } else {
+        delete this.listenMap[key];
       }
-    } else {
-      delete this.listenMap[key];
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
   once = (key: string, fun: Function) => {
-    if (!validStringParams(key)) {
-      console.error("缺少注册事件名称");
-      return;
-    }
-    key = this.prefix + key;
-
-    if (validFunctionParams(fun)) {
-      const wrapFun = (...args: Array<any>) => {
-        fun.apply(this, args);
-        this.off(key, wrapFun);
-      };
-      if (!this.hasKey(key)) {
-        this.listenMap[key] = [];
+    try {
+      if (validFunctionParams(fun)) {
+        const wrapFun = (...args: Array<any>) => {
+          fun.apply(this, args);
+          this.off(key, wrapFun);
+        };
+        this.on(key, wrapFun);
+      } else {
+        throw new Error("注册的函数错误");
       }
-      this.listenMap[key].push(wrapFun);
-    } else {
-      console.error("注册事件方法错误");
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
