@@ -15,3 +15,11 @@ export const validArrayParams = (params: any): boolean => {
 export const validObjectParams = (params: any): boolean => {
   return params && getType.isObject(params) && Object.keys(params).length > 0;
 };
+
+export const validRegExpParams = (params: any): boolean => {
+  return params && getType.isRegExp(params);
+};
+
+export const validNumberParams = (params: any): boolean => {
+  return params && getType.isNumber(params);
+};
