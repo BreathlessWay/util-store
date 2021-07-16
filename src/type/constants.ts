@@ -1,5 +1,4 @@
 export enum ValidFunName {
-  IsNotEmpty = "isNotEmpty",
   Required = "required",
   MinLength = "minLength",
   MaxLength = "maxLength",

@@ -4,7 +4,9 @@ import {
   validNumberParams,
   validObjectParams,
   validRegExpParams,
+  validStringParams,
 } from "utils/validParams";
+import GetType from "utils/GetType";
 
 type ValidatorRuleType = {
   strategy: RegExp | ValidFunName;
@@ -16,19 +18,18 @@ type ValidatorRuleType = {
 export default class ValidatorFunc {
   private validatorList: Array<() => string | undefined | void> = [];
 
-  private [ValidFunName.IsNotEmpty] = (value: any, errorMsg: string) => {
-    errorMsg = errorMsg || "参数不能为空";
-    if (value && value.length) {
+  private [ValidFunName.Required] = (value: any, errorMsg: string) => {
+    errorMsg = errorMsg || "参数必填";
+    if (
+      !GetType.isNull(value) &&
+      !GetType.isUndefined(value) &&
+      (validStringParams(value) ||
+        validObjectParams(value) ||
+        validArrayParams(value))
+    ) {
+      return "";
     }
     return errorMsg;
-  };
-
-  private [ValidFunName.Required] = (
-    value: any,
-    errorMsg: string = "参数必填"
-  ) => {
-    errorMsg = errorMsg || "参数必填";
-    console.log(errorMsg);
   };
 
   private [ValidFunName.IsValidUrl] = (value: any, errorMsg: string) => {
@@ -213,8 +214,7 @@ export default class ValidatorFunc {
           case strategy === ValidFunName.IsValidEmail:
           case strategy === ValidFunName.IsValidPhoneNumber:
           case strategy === ValidFunName.IsValidIdCardNumber:
-          case strategy === ValidFunName.Required:
-          case strategy === ValidFunName.IsNotEmpty: {
+          case strategy === ValidFunName.Required: {
             this.validatorList.push(() =>
               this[strategy as ValidFunName.IsValidUrl](value, errorMsg)
             );
