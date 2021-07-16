@@ -32,4 +32,15 @@ export const proxyRouteEvent = (collectEventData: Function) => {
     },
     false
   );
+
+  Object.defineProperty(window, "onpopstate", {
+    set(fun) {
+      this.addEventListener("popstate", fun);
+    },
+  });
+  Object.defineProperty(window, "onhashchange", {
+    set(fun) {
+      this.addEventListener("hashchange", fun);
+    },
+  });
 };

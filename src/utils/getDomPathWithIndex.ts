@@ -1,4 +1,6 @@
-export const getDomPathWithIndex = (ev: Event) => {
+export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
+  ev: HTMLElementEventMap[K]
+) => {
   const _path = ev.path;
   let pathResult = "";
   if (_path && _path.length) {

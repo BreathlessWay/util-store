@@ -1,5 +1,5 @@
-import * as proxyClickEvent from "proxyEvent/proxyClickEvent";
-import { proxyRouteEvent } from "proxyEvent/proxyRouteEvent";
+import * as proxyClickEvent from "EventSource/proxyClickEvent";
+import { proxyRouteEvent } from "EventSource/proxyRouteEvent";
 import CookieHandler from "utils/CookieHandler";
 import EventBus from "utils/EventBus";
 import { generateNormalId, generateUUID } from "utils/generateId";

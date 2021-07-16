@@ -67,12 +67,8 @@ export default async () => {
             replacement: path.resolve(projectRootDir, "src/utils"),
           },
           {
-            find: "proxyEvent",
-            replacement: path.resolve(projectRootDir, "src/proxyEvent"),
-          },
-          {
-            find: "systemInfo",
-            replacement: path.resolve(projectRootDir, "src/systemInfo"),
+            find: "EventSource",
+            replacement: path.resolve(projectRootDir, "src/EventSource"),
           },
           {
             find: "type",

@@ -1,6 +1,8 @@
 import { getDomPath } from "utils/getDomPath";
+import { getRelativePosition } from "utils/getRelativePosition";
+import { getDomContent } from "utils/getDomContent";
 
-export const proxyAddEventListener = (collectEventData: Function) => {
+export const proxyClickEvent = (collectEventData: Function) => {
   const originAddEventListener = HTMLElement.prototype.addEventListener;
 
   HTMLElement.prototype.addEventListener = function <
@@ -13,8 +15,10 @@ export const proxyAddEventListener = (collectEventData: Function) => {
     let listenerWrap = listener;
     if (type === "click") {
       listenerWrap = (ev: HTMLElementEventMap[K]) => {
-        const domPath = getDomPath(ev);
-        console.log(domPath);
+        const domPath = getDomPath(ev),
+          relativePosition = getRelativePosition(ev),
+          domContent = getDomContent(ev);
+        console.log(relativePosition, domPath, domContent);
         collectEventData(ev);
         listener.call(this, ev);
       };
@@ -26,12 +30,14 @@ export const proxyAddEventListener = (collectEventData: Function) => {
       options
     );
   };
-};
 
-export const proxyOnClick = () => {
   Object.defineProperty(HTMLElement.prototype, "onclick", {
     set(fun) {
       this.addEventListener("click", fun);
     },
+  });
+
+  window.addEventListener("click", (ev) => {
+    collectEventData(ev);
   });
 };
