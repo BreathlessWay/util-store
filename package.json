@@ -7,6 +7,7 @@
   "module": "dist/zUtil.esm.js",
   "dependencies": {
     "@babel/runtime": "^7.14.6",
+    "@babel/runtime-corejs3": "^7.14.7",
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
