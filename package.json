@@ -75,7 +75,11 @@
     "url": "git+https://github.com/BreathlessWay/zUtil-store.git"
   },
   "keywords": [],
-  "author": "BreathlessWay",
+  "author": {
+    "name": "BreathlessWay",
+    "email": "731005087@qq.com",
+    "url": "http://breathlessway.com/"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/BreathlessWay/zUtil-store/issues"

@@ -26,12 +26,6 @@ const commonOutput = [
   ],
   buildOutput = [
     {
-      file: "dist/zUtil-store.umd.js",
-      format: "umd",
-      sourcemap,
-      name: "zUtil",
-    },
-    {
       file: packageJson.main,
       format: "cjs",
       sourcemap,
