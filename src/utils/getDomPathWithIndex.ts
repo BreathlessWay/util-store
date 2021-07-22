@@ -14,7 +14,7 @@ export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
         i--;
         previousSibling =
           previousSibling.previousSibling ||
-          (previousSibling as any).previousElementSibling;
+          (previousSibling as HTMLElement).previousElementSibling;
       }
       i = Math.abs(i) + 1;
 

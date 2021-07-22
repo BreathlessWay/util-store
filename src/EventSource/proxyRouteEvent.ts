@@ -18,15 +18,10 @@ export const proxyRouteEvent = (collectEventData: Function) => {
       arguments as unknown as ParamType<typeof originReplaceStateMethod>
     );
   };
+  // history.go history.forward 会触发 popstate
+  // 所以 hashchange 也会触发 popstate
   window.addEventListener(
     "popstate",
-    (...args) => {
-      collectEventData(args);
-    },
-    false
-  );
-  window.addEventListener(
-    "hashchange",
     (...args) => {
       collectEventData(args);
     },
@@ -36,11 +31,6 @@ export const proxyRouteEvent = (collectEventData: Function) => {
   Object.defineProperty(window, "onpopstate", {
     set(fun) {
       this.addEventListener("popstate", fun);
-    },
-  });
-  Object.defineProperty(window, "onhashchange", {
-    set(fun) {
-      this.addEventListener("hashchange", fun);
     },
   });
 };

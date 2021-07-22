@@ -5,7 +5,7 @@ export const getDomContent = <K extends keyof HTMLElementEventMap>(
   while (firstChild && !(firstChild instanceof Text)) {
     firstChild = firstChild.firstChild as HTMLElement;
   }
-  if (firstChild) {
+  if (firstChild && firstChild.textContent) {
     return firstChild.textContent;
   }
   return "";

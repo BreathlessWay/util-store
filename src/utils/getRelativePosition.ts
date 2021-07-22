@@ -1,11 +1,13 @@
 export const getRelativePosition = <K extends keyof HTMLElementEventMap>(
   ev: HTMLElementEventMap[K]
 ) => {
-  const { pageX, pageY, target } = ev as MouseEvent,
-    { offsetLeft, offsetTop } = target as HTMLElement;
+  const { clientY, clientX, target } = ev as MouseEvent,
+    { left, top, width, height } = (
+      target as HTMLElement
+    ).getBoundingClientRect();
 
   return {
-    left: pageX - offsetLeft,
-    top: pageY - offsetTop,
+    left: (((clientX - left) / width) * 100).toFixed(2) + "%",
+    top: (((clientY - top) / height) * 100).toFixed(2) + "%",
   };
 };
