@@ -13,8 +13,8 @@
 # 错误收集
 
 1. try/catch：能捕获常规运行时错误，语法错误和异步错误不行
-2. window.onerror：能捕获常规运行时错误包括setTimeout之类异步错误，语法错误、接口异常、资源错误不能捕获
-3. window.addEventListener：资源加载错误，都能被捕获，new Image错误，不能捕获
+2. window.onerror：能捕获常规运行时同步/异步错误，语法错误、接口请求、资源请求错误不能捕获
+3. window.addEventListener：能捕获资源加载错误，new Image错误，不能捕获
 4. unhandledrejection：全局监听Uncaught Promise Error
 5. Vue错误：由于Vue会捕获所有Vue单文件组件或者Vue.extend继承的代码，所以在Vue里面出现的错误，并不会直接被window.onerror捕获，而是会抛给Vue.config.errorHandler
 6. React错误：通过componentDidCatch，声明一个错误边界的组件，不会捕捉：React事件处理，异步代码，error boundaries自己抛出的错误。
