@@ -20,7 +20,7 @@ export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
 
       let name = item.localName;
       if (name) {
-        name = `${item.localName}-${i}`;
+        name = `${item.localName}[${i}]`;
         if (id) {
           name = name + "#" + id;
         }

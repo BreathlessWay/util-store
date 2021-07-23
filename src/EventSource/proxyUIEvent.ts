@@ -3,7 +3,7 @@ import { getDomPathWithIndex } from "utils/getDomPathWithIndex";
 import { getRelativePosition } from "utils/getRelativePosition";
 import { getDomContent } from "utils/getDomContent";
 
-export const proxyClickEvent = (collectEventData: Function) => {
+export const proxyUIEvent = (collectEventData: Function) => {
   const originAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function <
     K extends keyof HTMLElementEventMap
@@ -12,18 +12,22 @@ export const proxyClickEvent = (collectEventData: Function) => {
     listener: (ev: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions | undefined
   ): void {
-    let listenerWrap = listener;
-    if (type === "click") {
-      listenerWrap = (ev: HTMLElementEventMap[K]) => {
+    let listenerWrap = (ev: HTMLElementEventMap[K]) => {
+      if (type === "click") {
         const domPath = getDomPath(ev),
           domPathWithIndex = getDomPathWithIndex(ev),
           relativePosition = getRelativePosition(ev),
           domContent = getDomContent(ev);
         console.log(relativePosition, domPathWithIndex, domPath, domContent);
         collectEventData(ev);
-        listener.call(this, ev);
-      };
-    }
+      }
+      if (type === "scroll") {
+        collectEventData(ev);
+      }
+
+      listener.call(this, ev);
+    };
+
     return originAddEventListener.call(
       this,
       type,
@@ -37,6 +41,12 @@ export const proxyClickEvent = (collectEventData: Function) => {
       this.addEventListener("click", fun);
     },
   });
+  Object.defineProperty(EventTarget.prototype, "scroll", {
+    set(fun) {
+      this.addEventListener("scroll", fun);
+    },
+  });
 
   window.addEventListener("click", (ev) => {});
+  window.addEventListener("scroll", (ev) => {});
 };
