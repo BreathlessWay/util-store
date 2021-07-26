@@ -1,4 +1,4 @@
-import { proxyClickEvent } from "EventSource/proxyClickEvent";
+import { proxyUIEvent } from "EventSource/proxyUIEvent";
 import { proxyRouteEvent } from "EventSource/proxyRouteEvent";
 import CookieHandler from "utils/CookieHandler";
 import EventBus from "utils/EventBus";
@@ -7,7 +7,7 @@ import ValidatorFunc from "utils/ValidatorFunc";
 import * as validParams from "utils/validParams";
 
 export default {
-  proxyClickEvent,
+  proxyUIEvent,
   proxyRouteEvent,
   CookieHandler,
   EventBus,
