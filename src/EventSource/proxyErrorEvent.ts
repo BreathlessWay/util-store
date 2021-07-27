@@ -16,7 +16,7 @@ export const proxyErrorEvent = (collectEventData: Function) => {
   // false - 默认。事件句柄在冒泡阶段执行
   window.addEventListener(
     "error",
-    function (errorEvent) {
+    (errorEvent) => {
       console.log("error", errorEvent);
       const { error, lineno, colno } = errorEvent;
       const errorKey = getErrorKey(error.message, lineno + "" + colno),
@@ -32,25 +32,25 @@ export const proxyErrorEvent = (collectEventData: Function) => {
     true
   );
 
-  window.addEventListener("unhandledrejection", function (e) {
-    console.log(arguments);
-    e.preventDefault(); // 去掉控制台的异常显示
-    collectEventData(arguments);
+  window.addEventListener("unhandledrejection", (promiseRejectionEvent) => {
+    console.log(promiseRejectionEvent);
+    // promiseRejectionEvent.preventDefault(); // 去掉控制台的异常显示
+    collectEventData(promiseRejectionEvent);
   });
 
   // 记录页面 crash 错误
-  window.addEventListener("load", function () {
-    sessionStorage.setItem("web_exit", "pending");
-    setInterval(function () {
-      sessionStorage.setItem("time_before_crash", new Date().toString());
+  window.addEventListener("load", () => {
+    localStorage.setItem("web_exit", "pending");
+    setInterval(() => {
+      localStorage.setItem("time_before_crash", new Date().toString());
     }, 1000);
   });
 
-  window.addEventListener("beforeunload", function () {
-    sessionStorage.setItem("web_exit", "resolve");
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("web_exit", "resolve");
   });
 
-  if (sessionStorage.getItem("open_web") !== "resolve") {
-    collectEventData(sessionStorage.getItem("time_before_crash"));
+  if (localStorage.getItem("open_web") !== "resolve") {
+    collectEventData(localStorage.getItem("time_before_crash"));
   }
 };
