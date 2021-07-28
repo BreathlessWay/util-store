@@ -22,3 +22,5 @@ export enum JavascriptErrorType {
 export const TIMESTAMP_LENGTH = 13;
 
 export const MAX_ERROR_COLLECT = 6;
+
+export const TIME_GAP = 200;

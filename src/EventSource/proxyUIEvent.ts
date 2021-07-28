@@ -3,7 +3,10 @@ import { getDomPathWithIndex } from "utils/getDomPathWithIndex";
 import { getRelativePosition } from "utils/getRelativePosition";
 import { getDomContent } from "utils/getDomContent";
 
-export const proxyUIEvent = (collectEventData: Function) => {
+import { TIME_GAP } from "src/type/constants";
+
+export const proxyUIEvent = (collectEventData: (data: any) => void) => {
+  let lastTimer = Date.now();
   const originAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function <
     K extends keyof HTMLElementEventMap
@@ -22,7 +25,11 @@ export const proxyUIEvent = (collectEventData: Function) => {
         collectEventData(ev);
       }
       if (type === "scroll") {
-        collectEventData(ev);
+        let currentTimer = Date.now();
+        if (currentTimer - lastTimer > TIME_GAP) {
+          collectEventData(ev);
+          lastTimer = currentTimer;
+        }
       }
 
       listener.call(this, ev);

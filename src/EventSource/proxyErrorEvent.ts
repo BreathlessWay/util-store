@@ -17,7 +17,6 @@ export const proxyErrorEvent = (collectEventData: Function) => {
   window.addEventListener(
     "error",
     (errorEvent) => {
-      console.log("error", errorEvent);
       const { error, lineno, colno } = errorEvent;
       const errorKey = getErrorKey(error.message, lineno + "" + colno),
         errorCount = errorCountMap.get(errorKey);
@@ -33,24 +32,7 @@ export const proxyErrorEvent = (collectEventData: Function) => {
   );
 
   window.addEventListener("unhandledrejection", (promiseRejectionEvent) => {
-    console.log(promiseRejectionEvent);
     // promiseRejectionEvent.preventDefault(); // 去掉控制台的异常显示
     collectEventData(promiseRejectionEvent);
   });
-
-  // 记录页面 crash 错误
-  window.addEventListener("load", () => {
-    localStorage.setItem("web_exit", "pending");
-    setInterval(() => {
-      localStorage.setItem("time_before_crash", new Date().toString());
-    }, 1000);
-  });
-
-  window.addEventListener("beforeunload", () => {
-    localStorage.setItem("web_exit", "resolve");
-  });
-
-  if (localStorage.getItem("open_web") !== "resolve") {
-    collectEventData(localStorage.getItem("time_before_crash"));
-  }
 };
