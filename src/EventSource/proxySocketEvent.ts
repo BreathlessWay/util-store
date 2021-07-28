@@ -250,15 +250,97 @@ const proxyFetchEvent = (collectEventData: Function) => {
       await reportFetchData(response, reportData, collectEventData);
       return response;
     } catch (e) {
-      console.log(e);
       throw e;
     }
   };
 };
 
-const proxyWebsocketEvent = () => {};
+const proxyWebsocketEvent = (collectEventData: Function) => {
+  class RewriteWebSocket extends WebSocket {
+    websocketReportData: Record<any, any> = {};
+
+    constructor(url: string, protocols?: string | string[]) {
+      super(url, protocols);
+      this.websocketReportData = {
+        url,
+        requestHeader: Object.assign(
+          protocols
+            ? {
+                "Sec-WebSocket-Protocol": protocols,
+              }
+            : {},
+          {
+            Connection: "upgrade",
+            Upgrade: "websocket",
+          }
+        ),
+        type: "websocket",
+        start: Date.now(),
+        status: 101,
+      };
+      this.addEventListener("open", (event) => {
+        const websocketOpenReportData = {
+          ...this.websocketReportData,
+          duration: Date.now() - this.websocketReportData.start,
+          statusText: event.type,
+          binaryType: this.binaryType,
+        };
+        collectEventData(websocketOpenReportData);
+      });
+      this.addEventListener("close", (event) => {
+        const websocketCloseReportData = {
+          ...this.websocketReportData,
+          duration: Date.now() - this.websocketReportData.start,
+          statusText: event.type,
+          binaryType: this.binaryType,
+          status: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean,
+        };
+        collectEventData(websocketCloseReportData);
+      });
+      this.addEventListener("message", (event) => {
+        const websocketMessageReportData = {
+          ...this.websocketReportData,
+          duration: Date.now() - this.websocketReportData.start,
+          statusText: event.type,
+          binaryType: this.binaryType,
+          result: event.data,
+          responseURL: event.origin,
+          lastEventId: event.lastEventId,
+          ports: event.ports,
+          source: event.source,
+        };
+        collectEventData(websocketMessageReportData);
+      });
+      this.addEventListener("error", (event) => {
+        const websocketErrorReportData = {
+          ...this.websocketReportData,
+          duration: Date.now() - this.websocketReportData.start,
+          statusText: event.type,
+          binaryType: this.binaryType,
+        };
+        collectEventData(websocketErrorReportData);
+      });
+    }
+
+    send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
+      const websocketSendReportData = {
+        ...this.websocketReportData,
+        duration: Date.now() - this.websocketReportData.start,
+        statusText: "send",
+        binaryType: this.binaryType,
+        body: data,
+      };
+      collectEventData(websocketSendReportData);
+      super.send(data);
+    }
+  }
+  window.WebSocket = RewriteWebSocket;
+};
 
 export const proxySocketEvent = (collectEventData: Function) => {
   proxyAjaxEvent(collectEventData);
   proxyFetchEvent(collectEventData);
+  proxyWebsocketEvent(collectEventData);
 };
