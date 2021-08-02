@@ -6,7 +6,7 @@ export const getDomContent = <K extends keyof HTMLElementEventMap>(
     firstChild = firstChild.firstChild as HTMLElement;
   }
   if (firstChild && firstChild.textContent) {
-    return firstChild.textContent;
+    return encodeURIComponent(firstChild.textContent.slice(0, 1024));
   }
   return "";
 };

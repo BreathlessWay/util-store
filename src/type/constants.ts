@@ -19,6 +19,12 @@ export enum JavascriptErrorType {
   HttpError = "HttpError", // Http请求错误
 }
 
+export enum DocumentReadyState {
+  loading = "loading", // 文档仍然在加载
+  interactive = "interactive", // 档结束加载并且被解析，但是想图片，样式，frame之类的子资源仍在加载
+  complete = "complete", // 文档和子资源已经结束加载，该状态表明将要触发load事件。
+}
+
 export const TIMESTAMP_LENGTH = 13;
 
 export const MAX_ERROR_COLLECT = 6;

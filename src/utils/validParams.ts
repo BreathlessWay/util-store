@@ -16,6 +16,12 @@ export const validObjectParams = (params: any): boolean => {
   return params && getType.isObject(params) && Object.keys(params).length > 0;
 };
 
+export const validObjectInstanceType = (params: any, type: string): boolean => {
+  return (
+    params && Object.prototype.toString.call(params) === `[object ${type}]`
+  );
+};
+
 export const validRegExpParams = (params: any): boolean => {
   return params && getType.isRegExp(params);
 };

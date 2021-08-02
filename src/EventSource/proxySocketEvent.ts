@@ -1,5 +1,9 @@
 import { ParamType } from "type/hepler";
-import { validObjectParams } from "utils/validParams";
+import {
+  validObjectInstanceType,
+  validObjectParams,
+  validStringParams,
+} from "utils/validParams";
 
 const transformHeaderToMap = (header: string) => {
   const headerMap: Record<string, any> = {};
@@ -20,7 +24,7 @@ const transformHeaderToMap = (header: string) => {
 async function reportAjaxData(
   this: XMLHttpRequest,
   reportData: SocketReportData,
-  collectEventData: Function
+  collectEventData: CollectEventDataType
 ) {
   let result: any;
   // An empty responseType string is the same as "text", the default type.
@@ -30,11 +34,19 @@ async function reportAjaxData(
     } catch (e) {
       result = this.responseText;
     }
-    return collectEventData({ ...reportData, result });
+    return collectEventData({
+      ...reportData,
+      result,
+      eventType: "http.XMLHttpRequest",
+    });
   }
   if (this.responseType === "document") {
     result = this.responseXML;
-    return collectEventData({ ...reportData, result });
+    return collectEventData({
+      ...reportData,
+      result,
+      eventType: "http.XMLHttpRequest",
+    });
   }
   if (this.responseType === "json") {
     try {
@@ -47,7 +59,11 @@ async function reportAjaxData(
     } catch (e) {
       result = this.response;
     }
-    return collectEventData({ ...reportData, result });
+    return collectEventData({
+      ...reportData,
+      result,
+      eventType: "http.XMLHttpRequest",
+    });
   }
   if (this.responseType === "blob") {
     try {
@@ -55,15 +71,23 @@ async function reportAjaxData(
     } catch (e) {
       result = this.response;
     }
-    return collectEventData({ ...reportData, result });
+    return collectEventData({
+      ...reportData,
+      result,
+      eventType: "http.XMLHttpRequest",
+    });
   }
   if (this.responseType === "arraybuffer") {
     result = this.response;
-    return collectEventData({ ...reportData, result });
+    return collectEventData({
+      ...reportData,
+      result,
+      eventType: "http.XMLHttpRequest",
+    });
   }
 }
 
-const proxyAjaxEvent = (collectEventData: Function) => {
+const proxyAjaxEvent = (collectEventData: CollectEventDataType) => {
   const originAbort = XMLHttpRequest.prototype.abort,
     originGetAllResponseHeaders =
       XMLHttpRequest.prototype.getAllResponseHeaders,
@@ -155,37 +179,37 @@ const proxyAjaxEvent = (collectEventData: Function) => {
 const reportFetchData = async (
   response: Response,
   reportData: SocketReportData,
-  collectEventData: Function
+  collectEventData: CollectEventDataType
 ) => {
   let result;
   // response 是个 Stream 对象只能读取一次，读取完就没了。这意味着，读取方法，只能使用一个，否则会报错。
   try {
     result = await response.clone().text();
-    return collectEventData({ ...reportData, result });
+    return collectEventData({ ...reportData, result, eventType: "http.fetch" });
   } catch (e) {}
 
   try {
     result = await response.clone().json();
-    return collectEventData({ ...reportData, result });
+    return collectEventData({ ...reportData, result, eventType: "http.fetch" });
   } catch (e) {}
 
   try {
     result = await response.clone().formData();
-    return collectEventData({ ...reportData, result });
+    return collectEventData({ ...reportData, result, eventType: "http.fetch" });
   } catch (e) {}
 
   try {
     result = await response.clone().blob();
-    return collectEventData({ ...reportData, result });
+    return collectEventData({ ...reportData, result, eventType: "http.fetch" });
   } catch (e) {}
 
   try {
     result = await response.clone().arrayBuffer();
-    return collectEventData({ ...reportData, result });
+    return collectEventData({ ...reportData, result, eventType: "http.fetch" });
   } catch (e) {}
 };
 
-const proxyFetchEvent = (collectEventData: Function) => {
+const proxyFetchEvent = (collectEventData: CollectEventDataType) => {
   const originFetch = window.fetch;
 
   window.fetch = async function (...args) {
@@ -193,10 +217,10 @@ const proxyFetchEvent = (collectEventData: Function) => {
       [requestInfo, requestInit] = args;
     let requestParams: Request;
     // 一个 Request 实例
-    if (requestInfo instanceof Request) {
-      requestParams = requestInfo;
+    if (validObjectInstanceType(requestInfo, "Request")) {
+      requestParams = requestInfo as Request;
     }
-    if (typeof requestInfo === "string") {
+    if (validStringParams(requestInfo)) {
       requestParams = new Request(requestInfo);
     }
     let {
@@ -255,7 +279,7 @@ const proxyFetchEvent = (collectEventData: Function) => {
   };
 };
 
-const proxyWebsocketEvent = (collectEventData: Function) => {
+const proxyWebsocketEvent = (collectEventData: CollectEventDataType) => {
   class RewriteWebSocket extends WebSocket {
     websocketReportData: Record<any, any> = {};
 
@@ -285,7 +309,10 @@ const proxyWebsocketEvent = (collectEventData: Function) => {
           statusText: event.type,
           binaryType: this.binaryType,
         };
-        collectEventData(websocketOpenReportData);
+        collectEventData({
+          ...websocketOpenReportData,
+          eventType: "websocket.open",
+        });
       });
       this.addEventListener("close", (event) => {
         const websocketCloseReportData = {
@@ -297,7 +324,10 @@ const proxyWebsocketEvent = (collectEventData: Function) => {
           reason: event.reason,
           wasClean: event.wasClean,
         };
-        collectEventData(websocketCloseReportData);
+        collectEventData({
+          ...websocketCloseReportData,
+          eventType: "websocket.close",
+        });
       });
       this.addEventListener("message", (event) => {
         const websocketMessageReportData = {
@@ -311,7 +341,10 @@ const proxyWebsocketEvent = (collectEventData: Function) => {
           ports: event.ports,
           source: event.source,
         };
-        collectEventData(websocketMessageReportData);
+        collectEventData({
+          ...websocketMessageReportData,
+          eventType: "websocket.message",
+        });
       });
       this.addEventListener("error", (event) => {
         const websocketErrorReportData = {
@@ -320,7 +353,10 @@ const proxyWebsocketEvent = (collectEventData: Function) => {
           statusText: event.type,
           binaryType: this.binaryType,
         };
-        collectEventData(websocketErrorReportData);
+        collectEventData({
+          ...websocketErrorReportData,
+          eventType: "websocket.error",
+        });
       });
     }
 
@@ -332,14 +368,17 @@ const proxyWebsocketEvent = (collectEventData: Function) => {
         binaryType: this.binaryType,
         body: data,
       };
-      collectEventData(websocketSendReportData);
+      collectEventData({
+        ...websocketSendReportData,
+        eventType: "websocket.send",
+      });
       super.send(data);
     }
   }
   window.WebSocket = RewriteWebSocket;
 };
 
-export const proxySocketEvent = (collectEventData: Function) => {
+export const proxySocketEvent = (collectEventData: CollectEventDataType) => {
   proxyAjaxEvent(collectEventData);
   proxyFetchEvent(collectEventData);
   proxyWebsocketEvent(collectEventData);
