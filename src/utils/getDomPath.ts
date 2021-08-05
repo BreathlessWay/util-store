@@ -1,7 +1,8 @@
 export const getDomPath = <K extends keyof HTMLElementEventMap>(
   ev: HTMLElementEventMap[K]
 ) => {
-  const _path = ev.path;
+  // 兼容 firefox
+  const _path = ev.path || (ev.composedPath && ev.composedPath());
   let pathResult = "";
   if (_path && _path.length) {
     _path.forEach((item, index: number) => {
