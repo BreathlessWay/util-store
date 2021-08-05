@@ -1,5 +1,5 @@
 import { proxyUIEvent } from "EventSource/proxyUIEvent";
-import { proxyRouteEvent } from "EventSource/proxyRouteEvent";
+import { proxyPageLifecycleEvent } from "EventSource/proxyPageLifecycleEvent";
 import { proxyErrorEvent } from "EventSource/proxyErrorEvent";
 import { proxySocketEvent } from "EventSource/proxySocketEvent";
 
@@ -11,7 +11,7 @@ import * as validParams from "utils/validParams";
 
 export default {
   proxyUIEvent,
-  proxyRouteEvent,
+  proxyPageLifecycleEvent,
   proxyErrorEvent,
   proxySocketEvent,
   CookieHandler,

@@ -27,5 +27,5 @@ export const validRegExpParams = (params: any): boolean => {
 };
 
 export const validNumberParams = (params: any): boolean => {
-  return params && getType.isNumber(params);
+  return getType.isNumber(params) && !isNaN(params) && !isFinite(params);
 };

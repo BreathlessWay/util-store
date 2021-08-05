@@ -1,6 +1,7 @@
 import lifecycle from "page-lifecycle";
 
 import { ParamType } from "src/type/hepler";
+import { validFunctionParams } from "utils/validParams";
 
 export const proxyPageLifecycleEvent = (
   collectEventData: CollectEventDataType
@@ -13,7 +14,13 @@ export const proxyPageLifecycleEvent = (
     title: string,
     url?: string | null
   ) {
-    collectEventData({ data, title, url, eventType: "history.pushState" });
+    collectEventData({
+      data,
+      title,
+      url,
+      eventType: "history.pushState",
+      lastTime: Date.now(),
+    });
     return originPushStateMethod.apply(
       this,
       arguments as unknown as ParamType<typeof originPushStateMethod>
@@ -24,7 +31,13 @@ export const proxyPageLifecycleEvent = (
     title: string,
     url?: string | null
   ) {
-    collectEventData({ data, title, url, eventType: "history.replaceState" });
+    collectEventData({
+      data,
+      title,
+      url,
+      eventType: "history.replaceState",
+      lastTime: Date.now(),
+    });
     return originReplaceStateMethod.apply(
       this,
       arguments as unknown as ParamType<typeof originReplaceStateMethod>
@@ -35,14 +48,24 @@ export const proxyPageLifecycleEvent = (
   window.addEventListener(
     "popstate",
     (ev) => {
-      collectEventData({ ...ev, eventType: "history.popstate" });
+      collectEventData({
+        ...ev,
+        eventType: "history.popstate",
+        lastTime: Date.now(),
+      });
     },
     false
   );
 
   Object.defineProperty(window, "onpopstate", {
     set(fun) {
-      this.addEventListener("popstate", fun);
+      this.cacheFun = fun;
+      if (validFunctionParams(fun)) {
+        this.addEventListener("popstate", fun);
+      }
+    },
+    get() {
+      return this.cacheFun;
     },
   });
 
