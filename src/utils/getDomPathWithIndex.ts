@@ -5,25 +5,23 @@ export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
   const _path = ev.path || (ev.composedPath && ev.composedPath());
   let pathResult = "";
   if (_path && _path.length) {
-    _path.forEach((item: Element, index: number) => {
+    _path.forEach((item, index: number) => {
       const classname = Array.prototype.join.call(item.classList || [], "."),
         id = item.id;
-      let previousSibling = item.previousSibling || item.previousElementSibling,
-        i = 0;
+      let previousSibling = item.previousElementSibling,
+        nextSibling = item.nextElementSibling,
+        i = 0,
+        hasSibling = Boolean(previousSibling || nextSibling);
 
       while (previousSibling) {
-        if (previousSibling.nodeType === 1) {
-          i--;
-        }
-        previousSibling =
-          previousSibling.previousSibling ||
-          (previousSibling as HTMLElement).previousElementSibling;
+        i--;
+        previousSibling = previousSibling.previousElementSibling;
       }
-      i = Math.abs(i) + 1;
 
       let name = item.localName;
       if (name) {
-        if (name !== "html" && name !== "body") {
+        if (name !== "html" && name !== "body" && hasSibling) {
+          i = Math.abs(i) + 1;
           name = `${item.localName}[${i}]`;
         }
         if (id) {
