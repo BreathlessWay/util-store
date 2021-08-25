@@ -78,6 +78,65 @@ const getPerformance = () => {
   return { ...pageShowTime, resource };
 };
 
+const listenerWrapFun = <K extends keyof HTMLElementEventMap>(
+  type: K,
+  listener: (ev: HTMLElementEventMap[K]) => any,
+  collectEventData: CollectEventDataType
+) => {
+  let lastTimer = Date.now();
+  return (ev: HTMLElementEventMap[K]) => {
+    if (type === "click") {
+      const domPath = getDomPath(ev),
+        domPathWithIndex = getDomPathWithIndex(ev),
+        relativePosition = getRelativePosition(ev),
+        domContent = getDomContent(ev);
+      collectEventData({
+        ...ev,
+        relativePosition,
+        domPathWithIndex,
+        domPath,
+        domContent,
+        eventType: "ui.click",
+      });
+    }
+    if (type === "scroll") {
+      let currentTimer = Date.now();
+      if (currentTimer - lastTimer > TIME_GAP) {
+        collectEventData({ ...ev, eventType: "ui.scroll" });
+        lastTimer = currentTimer;
+      }
+    }
+    if (type === "touchstart") {
+      collectEventData({ ...ev, eventType: "ui.touchstart" });
+    }
+    if (type === "touchend") {
+      collectEventData({ ...ev, eventType: "ui.touchend" });
+    }
+    if (type === "load") {
+    }
+    // 由于我们一般会将静态资源存放在 cdn 等第三方域名上，所以当前业务域名中的 window.onerror 会将这类错误统一展示为 Script error。
+    // 浏览器不会对 try-catch 起来的异常进行跨域拦截，所以我们采用劫持原生方法，将原生方法用 try/catch 的函数包裹来处理。
+    try {
+      return listener.call(this, ev);
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+const getKey = <K extends keyof HTMLElementEventMap>(
+  type: K,
+  options?: boolean | AddEventListenerOptions | undefined
+) => {
+  return (
+    "__" +
+    type +
+    "_" +
+    (options === true || (options && options.capture) ? "capture" : "bubble") +
+    "__"
+  );
+};
+
 export const proxyUIEvent = (collectEventData: CollectEventDataType) => {
   const originStopPropagation = MouseEvent.prototype.stopPropagation;
 
@@ -86,8 +145,9 @@ export const proxyUIEvent = (collectEventData: CollectEventDataType) => {
     originStopPropagation.apply(this);
   };
 
-  let lastTimer = Date.now();
-  const originAddEventListener = EventTarget.prototype.addEventListener;
+  const originAddEventListener = EventTarget.prototype.addEventListener,
+    originRemoveEventListener = EventTarget.prototype.removeEventListener;
+
   EventTarget.prototype.addEventListener = function <
     K extends keyof HTMLElementEventMap
   >(
@@ -95,44 +155,14 @@ export const proxyUIEvent = (collectEventData: CollectEventDataType) => {
     listener: (ev: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions | undefined
   ): void {
-    let listenerWrap = (ev: HTMLElementEventMap[K]) => {
-      if (type === "click") {
-        const domPath = getDomPath(ev),
-          domPathWithIndex = getDomPathWithIndex(ev),
-          relativePosition = getRelativePosition(ev),
-          domContent = getDomContent(ev);
-        collectEventData({
-          ...ev,
-          relativePosition,
-          domPathWithIndex,
-          domPath,
-          domContent,
-          eventType: "ui.click",
-        });
-      }
-      if (type === "scroll") {
-        let currentTimer = Date.now();
-        if (currentTimer - lastTimer > TIME_GAP) {
-          collectEventData({ ...ev, eventType: "ui.scroll" });
-          lastTimer = currentTimer;
-        }
-      }
-      if (type === "touchstart") {
-        collectEventData({ ...ev, eventType: "ui.touchstart" });
-      }
-      if (type === "touchend") {
-        collectEventData({ ...ev, eventType: "ui.touchend" });
-      }
-      if (type === "load") {
-      }
-      // 由于我们一般会将静态资源存放在 cdn 等第三方域名上，所以当前业务域名中的 window.onerror 会将这类错误统一展示为 Script error。
-      // 浏览器不会对 try-catch 起来的异常进行跨域拦截，所以我们采用劫持原生方法，将原生方法用 try/catch 的函数包裹来处理。
-      try {
-        return listener.call(this, ev);
-      } catch (error) {
-        throw error;
-      }
-    };
+    let listenerWrap;
+    const cacheKey = getKey(type, options);
+    if ((listener as any)[cacheKey]) {
+      listenerWrap = (listener as any)[cacheKey];
+    } else {
+      listenerWrap = listenerWrapFun(type, listener, collectEventData);
+      (listener as any)[cacheKey] = listenerWrap;
+    }
 
     return originAddEventListener.call(
       this,
@@ -142,11 +172,29 @@ export const proxyUIEvent = (collectEventData: CollectEventDataType) => {
     );
   };
 
+  EventTarget.prototype.removeEventListener = function <
+    K extends keyof HTMLElementEventMap
+  >(
+    type: K,
+    listener: (ev: HTMLElementEventMap[K]) => any,
+    options?: boolean | EventListenerOptions
+  ): void {
+    return originRemoveEventListener.call(
+      this,
+      type,
+      (listener as any)[getKey(type, options)] || listener,
+      options
+    );
+  };
+
   Object.defineProperty(EventTarget.prototype, "onclick", {
     set(fun) {
-      this.cacheFun = fun;
       if (validFunctionParams(fun)) {
         this.addEventListener("click", fun);
+        this.cacheFun = fun;
+      } else {
+        this.cacheFun && this.removeEventListener("click", this.cacheFun);
+        delete this.cacheFun;
       }
     },
     get() {
@@ -155,9 +203,12 @@ export const proxyUIEvent = (collectEventData: CollectEventDataType) => {
   });
   Object.defineProperty(EventTarget.prototype, "scroll", {
     set(fun) {
-      this.cacheFun = fun;
       if (validFunctionParams(fun)) {
-        this.addEventListener("scroll", fun);
+        this.addEventListener("click", fun);
+        this.cacheFun = fun;
+      } else {
+        this.cacheFun && this.removeEventListener("scroll", this.cacheFun);
+        delete this.cacheFun;
       }
     },
     get() {

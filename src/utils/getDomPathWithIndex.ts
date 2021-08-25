@@ -12,7 +12,9 @@ export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
         i = 0;
 
       while (previousSibling) {
-        i--;
+        if (previousSibling.nodeType === 1) {
+          i--;
+        }
         previousSibling =
           previousSibling.previousSibling ||
           (previousSibling as HTMLElement).previousElementSibling;
@@ -21,7 +23,9 @@ export const getDomPathWithIndex = <K extends keyof HTMLElementEventMap>(
 
       let name = item.localName;
       if (name) {
-        name = `${item.localName}[${i}]`;
+        if (name !== "html" && name !== "body") {
+          name = `${item.localName}[${i}]`;
+        }
         if (id) {
           name = name + "#" + id;
         }
