@@ -1,6 +1,6 @@
 {
   "name": "@breathlessway/zutils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "util store, for example: eventbus cookie validator",
   "browser": "dist/zUtils.min.js",
   "main": "dist/zUtils.cjs.js",
