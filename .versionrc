@@ -1,9 +1,4 @@
 {
-    "skip": {
-      "changelog": false,
-      "tag": true,
-      "bump": true
-    },
     "types": [
       {
         "type": "feat",
