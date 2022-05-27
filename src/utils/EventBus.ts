@@ -10,7 +10,7 @@ type ListenMapValueType = {
   offlineStack: Array<Function>;
 };
 
-class EventBus {
+export default class EventBus {
   constructor(prefix?: string) {
     this.prefix = prefix!;
   }
@@ -132,5 +132,3 @@ class EventBus {
     this.listenMap = {};
   };
 }
-
-export default EventBus;

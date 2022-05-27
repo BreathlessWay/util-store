@@ -19,9 +19,9 @@ const commonOutput = [
       file: packageJson.browser,
       format: "iife",
       sourcemap,
-      name: "zUtil",
-      banner: "/*! zUtil-store version " + packageJson.version + " */",
-      footer: "/*! Author: " + packageJson.author + " */",
+      name: "zUtils",
+      banner: "/*! zUtils-store version " + packageJson.version + " */",
+      footer: "/*! Author: " + packageJson.author.name + " */",
     },
   ],
   buildOutput = [

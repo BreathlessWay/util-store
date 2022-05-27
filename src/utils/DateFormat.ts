@@ -1,4 +1,4 @@
-export const DateFormat = (date: Date, fmt: string) => {
+const DateFormat = (date: Date, fmt: string) => {
   const o = {
     "M+": date.getMonth() + 1, // 月份
     "d+": date.getDate(), // 日
@@ -25,3 +25,5 @@ export const DateFormat = (date: Date, fmt: string) => {
   }
   return fmt;
 };
+
+export default DateFormat;

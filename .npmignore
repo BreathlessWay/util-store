@@ -71,10 +71,10 @@ jspm_packages/
 .yarn/install-state.gz
 .pnp.*
 
-src/
-server/
-client/
 .husky/
+client/
+server/
+src/
 .babelrc
 .browserslistrc
 .cz-config.js
