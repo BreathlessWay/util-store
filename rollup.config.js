@@ -10,7 +10,7 @@ import packageJson from "./package.json";
 
 const isDevelopment = process.env.NODE_ENV === "development",
   isProduction = process.env.NODE_ENV === "production",
-  sourcemap = isDevelopment ? "inline" : "hidden",
+  sourcemap = isDevelopment ? "inline" : false,
   extensions = [".js", ".jsx", ".es6", ".es", ".mjs", ".ts"],
   projectRootDir = path.resolve(__dirname);
 
@@ -20,7 +20,7 @@ const commonOutput = [
       format: "iife",
       sourcemap,
       name: "zUtils",
-      banner: "/*! zUtils-store version " + packageJson.version + " */",
+      banner: "/*! zUtils version " + packageJson.version + " */",
       footer: "/*! Author: " + packageJson.author.name + " */",
     },
   ],
@@ -28,12 +28,17 @@ const commonOutput = [
     {
       file: packageJson.main,
       format: "cjs",
+      exports: 'auto',
       sourcemap,
+      banner: "/*! zUtils version " + packageJson.version + " */",
+      footer: "/*! Author: " + packageJson.author.name + " */",
     },
     {
       file: packageJson.module,
       format: "es",
       sourcemap,
+      banner: "/*! zUtils version " + packageJson.version + " */",
+      footer: "/*! Author: " + packageJson.author.name + " */",
     },
   ],
   output = isProduction ? buildOutput.concat(commonOutput) : commonOutput;
