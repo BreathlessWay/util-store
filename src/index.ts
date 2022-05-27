@@ -1,15 +1,14 @@
-import CookieHandler from "utils/CookieHandler";
-import DateFormat  from "utils/DateFormat";
-import EventBus from "utils/EventBus";
-import ValidatorFunc from "utils/ValidatorFunc";
-import GetType from "utils/GetType";
-import * as validParams from "utils/validParams";
-
-export default {
-  CookieHandler,
-  EventBus,
-  GetType,
-  ValidatorFunc,
-  DateFormat,
-  ...validParams,
-};
+export { default as CookieHandler } from "utils/CookieHandler";
+export { default as DateFormat } from "utils/DateFormat";
+export { default as EventBus } from "utils/EventBus";
+export { default as ValidatorFunc } from "utils/ValidatorFunc";
+export { default as GetType } from "utils/GetType";
+export {
+  validStringParams,
+  validFunctionParams,
+  validArrayParams,
+  validObjectParams,
+  validObjectInstanceType,
+  validRegExpParams,
+  validNumberParams,
+} from "utils/validParams";

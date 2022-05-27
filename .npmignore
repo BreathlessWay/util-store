@@ -71,6 +71,7 @@ jspm_packages/
 .yarn/install-state.gz
 .pnp.*
 
+.idea
 .husky/
 client/
 server/
@@ -82,6 +83,7 @@ src/
 .lintstagedrc
 .prettierrc
 .versionrc
+CHANGELOG.md
 commitlint.config.js
 nodemon.json
 rollup.config.js

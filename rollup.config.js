@@ -36,6 +36,7 @@ const commonOutput = [
     {
       file: packageJson.module,
       format: "es",
+      exports: 'auto',
       sourcemap,
       banner: "/*! zUtils version " + packageJson.version + " */",
       footer: "/*! Author: " + packageJson.author.name + " */",
