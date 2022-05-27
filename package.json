@@ -68,8 +68,10 @@
     "release": "standard-version",
     "am": "git add . && cz && git push",
     "lint": "lint-staged",
-    "pretty": "prettier --write"
+    "pretty": "prettier --write",
+    "build:types": "tsc -b ./tsconfig.json"
   },
+  "types": "dist/types",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BreathlessWay/zUtil-store.git"
