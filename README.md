@@ -1,5 +1,18 @@
 # zUtils
 
+> 使用方式
+
+```
+// 安装模块
+npm i @breathlessway/zutils -S
+
+// 使用模块
+
+import { GetType } from '@breathlessway/zutils'
+
+GetType.isDate('')
+```
+
 > 一个常用工具函数的集合
 
 ```js
