@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/BreathlessWay/zUtil-store/compare/v0.0.2...v0.0.3) (2022-05-28)
+
+
+### Bug Fixes
+
+* iife输出会影响esm ([06b6d1b](https://github.com/BreathlessWay/zUtil-store/commit/06b6d1b7eeaf6afa2ef076743ba200cf342a5894))
+* umd代替iife ([e4c010f](https://github.com/BreathlessWay/zUtil-store/commit/e4c010feed824ab215fa28574b8d77cafc594a93))
+
 ### 0.0.2 (2022-05-27)
 
 
