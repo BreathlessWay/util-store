@@ -17,12 +17,12 @@ const isDevelopment = process.env.NODE_ENV === "development",
   projectRootDir = path.resolve(__dirname);
 
 const input = "src/index.ts";
-const iifeOutput = [
+const umdOutput = [
     {
       file: packageJson.browser,
-      format: "iife",
+      format: "umd",
+      name: 'zUtils',
       sourcemap,
-      name: "zUtils",
       banner: "/*! zUtils version " + packageJson.version + " */",
       footer: "/*! Author: " + packageJson.author.name + " */",
     },
@@ -86,11 +86,11 @@ const plugins = [
 ];
 
 export default [
-  // {
-  //   input,
-  //   output: iifeOutput,
-  //   plugins: plugins.concat(babelPlugin),
-  // },
+  {
+    input,
+    output: umdOutput,
+    plugins: plugins.concat(babelPlugin),
+  },
   {
     input,
     output: cjsOutput,

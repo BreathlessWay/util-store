@@ -228,7 +228,7 @@ export default class ValidatorFunc {
           }
         }
       });
-    } catch (e) {
+    } catch (e:any) {
       console.warn(e.message);
     }
   };

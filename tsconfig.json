@@ -13,7 +13,7 @@
     "declaration": true,                         /* Generates corresponding '.d.ts' file. */
     "declarationMap": false,                      /* Generates a sourcemap for each corresponding '.d.ts' file. */
     "emitDeclarationOnly": false,
-    "declarationDir": "./dist/types",
+    "declarationDir": "./types",
     // "sourceMap": true,                           /* Generates corresponding '.map' file. */
     // "outFile": "./",                             /* Concatenate and emit output to single file. */
     // "outDir": "./",                              /* Redirect output structure to the directory. */

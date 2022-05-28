@@ -1,10 +1,40 @@
 {
   "name": "@breathlessway/zutils",
   "version": "0.0.2",
+  "author": {
+    "name": "BreathlessWay",
+    "email": "731005087@qq.com",
+    "url": "http://breathlessway.com/"
+  },
   "description": "util store, for example: eventbus cookie validator",
+  "keywords": [
+    "zUtils",
+    "rollup",
+    "typescript",
+    "eventbus",
+    "cookie"
+  ],
+  "license": "MIT",
   "browser": "dist/zUtils.min.js",
   "main": "dist/zUtils.cjs.js",
   "module": "dist/zUtils.esm.js",
+  "types": "dist/types/src/index.d.ts",
+  "scripts": {
+    "prepare": "husky install",
+    "clean": "rimraf dist",
+    "prestart": "npm run clean",
+    "start": "rollup -c --environment NODE_ENV:development -w",
+    "server": "nodemon server/app.ts",
+    "prebuild": "npm run clean",
+    "build": "rollup -c --environment NODE_ENV:production",
+    "release": "standard-version",
+    "prepublishOnly": "npm run build",
+    "deploy": "npm run release && git push --follow-tags origin main && npm publish --access public",
+    "am": "git add . && cz && git push",
+    "lint": "lint-staged",
+    "pretty": "prettier --write",
+    "build:types": "tsc -b ./tsconfig.json"
+  },
   "dependencies": {
     "@babel/runtime": "^7.18.3",
     "@babel/runtime-corejs3": "^7.18.3"
@@ -57,33 +87,10 @@
     "typescript": "^4.7.2",
     "zlib": "^1.0.5"
   },
-  "scripts": {
-    "prepare": "husky install",
-    "clean": "rimraf dist",
-    "prestart": "npm run clean",
-    "start": "rollup -c --environment NODE_ENV:development -w",
-    "server": "nodemon server/app.ts",
-    "prebuild": "npm run clean",
-    "build": "rollup -c --environment NODE_ENV:production",
-    "release": "standard-version",
-    "prepublishOnly": "npm run build",
-    "deploy": "npm run release && git push --follow-tags origin main && npm publish --access public",
-    "am": "git add . && cz && git push",
-    "lint": "lint-staged",
-    "pretty": "prettier --write",
-    "build:types": "tsc -b ./tsconfig.json"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BreathlessWay/zUtil-store.git"
   },
-  "keywords": [],
-  "author": {
-    "name": "BreathlessWay",
-    "email": "731005087@qq.com",
-    "url": "http://breathlessway.com/"
-  },
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/BreathlessWay/zUtil-store/issues"
   },

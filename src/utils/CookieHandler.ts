@@ -152,7 +152,7 @@ export default class CookieHandler {
 
       document.cookie = `${_value}${_maxAge}${_expires}${_path}${_domain}${_secure}`;
       return true;
-    } catch (e) {
+    } catch (e:any) {
       console.error(e.message);
     }
     return false;
@@ -166,7 +166,7 @@ export default class CookieHandler {
         ),
         value = document.cookie.replace(reg, "$1");
       return decodeURIComponent(value);
-    } catch (e) {
+    } catch (e:any) {
       console.error(e.message);
     }
   };
@@ -182,7 +182,7 @@ export default class CookieHandler {
         return true;
       }
       return false;
-    } catch (e) {
+    } catch (e:any) {
       console.error(e.message);
     }
   };
@@ -191,7 +191,7 @@ export default class CookieHandler {
     try {
       key = this.computeKey(key);
       return new RegExp("(?:^|;\\s*)" + key + "\\s*\\=").test(document.cookie);
-    } catch (e) {
+    } catch (e:any) {
       console.error(e.message);
     }
     return false;
@@ -203,7 +203,7 @@ export default class CookieHandler {
         this.removeItem(key);
       });
       return true;
-    } catch (e) {
+    } catch (e:any) {
       console.error(e.message);
     }
     return false;
