@@ -5,6 +5,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
 import alias from "@rollup/plugin-alias";
+import typescript from "@rollup/plugin-typescript";
+import { terser } from "rollup-plugin-terser";
 
 import packageJson from "./package.json";
 
@@ -14,7 +16,8 @@ const isDevelopment = process.env.NODE_ENV === "development",
   extensions = [".js", ".jsx", ".es6", ".es", ".mjs", ".ts"],
   projectRootDir = path.resolve(__dirname);
 
-const commonOutput = [
+const input = "src/index.ts";
+const iifeOutput = [
     {
       file: packageJson.browser,
       format: "iife",
@@ -24,68 +27,80 @@ const commonOutput = [
       footer: "/*! Author: " + packageJson.author.name + " */",
     },
   ],
-  buildOutput = [
-    {
-      file: packageJson.main,
-      format: "cjs",
-      exports: 'auto',
-      sourcemap,
-      banner: "/*! zUtils version " + packageJson.version + " */",
-      footer: "/*! Author: " + packageJson.author.name + " */",
-    },
-    {
-      file: packageJson.module,
-      format: "es",
-      exports: 'auto',
-      sourcemap,
-      banner: "/*! zUtils version " + packageJson.version + " */",
-      footer: "/*! Author: " + packageJson.author.name + " */",
-    },
-  ],
-  output = isProduction ? buildOutput.concat(commonOutput) : commonOutput;
-
-export default async () => {
-  return {
-    input: "src/index.ts",
-    output,
-    plugins: [
-      json(),
-      commonjs(),
-      babel({
-        extensions,
-        babelHelpers: "runtime",
-        exclude: "**/node_modules/**",
-      }),
-      alias({
-        entries: [
-          {
-            find: "src",
-            replacement: path.resolve(projectRootDir, "src"),
-          },
-          {
-            find: "utils",
-            replacement: path.resolve(projectRootDir, "src/utils"),
-          },
-          {
-            find: "EventSource",
-            replacement: path.resolve(projectRootDir, "src/EventSource"),
-          },
-          {
-            find: "type",
-            replacement: path.resolve(projectRootDir, "src/type"),
-          },
-        ],
-      }),
-      resolve({
-        extensions,
-        mainFields: ["jsnext:main"],
-      }),
-      isProduction &&
-        (await import("rollup-plugin-terser")).terser({
-          output: {
-            comments: /^!/,
-          },
-        }),
-    ],
+  cjsOutput = {
+    file: packageJson.main,
+    format: "cjs",
+    exports: "auto",
+    sourcemap,
+    banner: "/*! zUtils version " + packageJson.version + " */",
+    footer: "/*! Author: " + packageJson.author.name + " */",
+  },
+  esOutput = {
+    file: packageJson.module,
+    format: "es",
+    exports: "auto",
+    sourcemap,
+    banner: "/*! zUtils version " + packageJson.version + " */",
+    footer: "/*! Author: " + packageJson.author.name + " */",
   };
-};
+
+const babelPlugin = babel({
+  extensions,
+  babelHelpers: "runtime",
+  exclude: "**/node_modules/**",
+});
+
+const plugins = [
+  json(),
+  commonjs(),
+  alias({
+    entries: [
+      {
+        find: "src",
+        replacement: path.resolve(projectRootDir, "src"),
+      },
+      {
+        find: "utils",
+        replacement: path.resolve(projectRootDir, "src/utils"),
+      },
+      {
+        find: "EventSource",
+        replacement: path.resolve(projectRootDir, "src/EventSource"),
+      },
+      {
+        find: "type",
+        replacement: path.resolve(projectRootDir, "src/type"),
+      },
+    ],
+  }),
+  resolve({
+    extensions,
+    mainFields: ["jsnext:main"],
+  }),
+  isProduction &&
+    terser({
+      output: {
+        comments: /^!/,
+      },
+    }),
+];
+
+export default [
+  {
+    input,
+    output: iifeOutput,
+    plugins: plugins.concat(babelPlugin),
+  },
+  {
+    input,
+    output: cjsOutput,
+    plugins: plugins.concat(babelPlugin),
+  },
+  {
+    input,
+    output: esOutput,
+    plugins: plugins.concat(typescript({
+      tsconfig: './tsconfig.json'
+    })),
+  },
+];
