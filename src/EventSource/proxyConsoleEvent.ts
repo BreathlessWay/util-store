@@ -1,8 +1,10 @@
 export const proxyConsoleEvent = (collectEventData: CollectEventDataType) => {
-  const consoleLevelArray: Array<keyof Console> = ["log", "warn", "error"];
+  const consoleLevelArray = ["log", "warn", "error"];
 
   consoleLevelArray.forEach((_) => {
+    // @ts-ignore
     const originConsole = console[_];
+    // @ts-ignore
     console[_] = function () {
       collectEventData({
         message: [...arguments].join(","),

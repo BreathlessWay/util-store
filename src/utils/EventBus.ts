@@ -54,7 +54,7 @@ export default class EventBus {
       } else {
         throw new Error("注册的函数错误");
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e.message);
     }
   };
@@ -82,7 +82,7 @@ export default class EventBus {
           this.trigger(key, ...args);
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e.message);
     }
   };
@@ -107,7 +107,7 @@ export default class EventBus {
       } else {
         delete this.listenMap[key];
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e.message);
     }
   };
@@ -123,7 +123,7 @@ export default class EventBus {
       } else {
         throw new Error("注册的函数错误");
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e.message);
     }
   };

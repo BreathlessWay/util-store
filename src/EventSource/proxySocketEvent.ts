@@ -283,7 +283,7 @@ const proxyWebsocketEvent = (collectEventData: CollectEventDataType) => {
   class RewriteWebSocket extends WebSocket {
     websocketReportData: Record<any, any> = {};
 
-    constructor(url: string, protocols?: string | string[]) {
+    constructor(url: string | URL, protocols?: string | string[]) {
       super(url, protocols);
       this.websocketReportData = {
         url,

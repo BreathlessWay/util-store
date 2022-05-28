@@ -86,11 +86,11 @@ const plugins = [
 ];
 
 export default [
-  {
-    input,
-    output: iifeOutput,
-    plugins: plugins.concat(babelPlugin),
-  },
+  // {
+  //   input,
+  //   output: iifeOutput,
+  //   plugins: plugins.concat(babelPlugin),
+  // },
   {
     input,
     output: cjsOutput,
